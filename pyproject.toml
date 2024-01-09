@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Louis Lac <lac.louis5@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "uform-coreml-exporters", from = "src" }]
+packages = [{ include = "uform_coreml_converters", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.10,<3.13"
@@ -20,11 +20,19 @@ numpy = "^1.26.3"
 uform = "^1.0.3"
 coremltools = "^7.1"
 click = "^8.1.7"
+transformers = "^4.36.2"
+scikit-learn = "^1.3.2"
 
 [[tool.poetry.source]]
 name = "pytorch"
 url = "https://download.pytorch.org/whl/cu118"
 priority = "explicit"
+
+[tool.poetry.group.dev.dependencies]
+pillow = "^10.2.0"
+
+[tool.poetry.scripts]
+convert = "uform_coreml_converters.cli.convert:main"
 
 [build-system]
 requires = ["poetry-core"]

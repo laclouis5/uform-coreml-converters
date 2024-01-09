@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "uform-coreml-exporters"
+version = "0.1.0"
+description = ""
+authors = ["Louis Lac <lac.louis5@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "uform-coreml-exporters", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.10,<3.13"
+torch = [
+    { version = "^2.0.0", source = "PyPI", platform = "darwin" },
+    { version = "^2.0.0", source = "pytorch", platform = "!=darwin" },
+]
+torchvision = [
+    { version = "^0.15.0", source = "PyPI", platform = "darwin" },
+    { version = "^0.15.0", source = "pytorch", platform = "!=darwin" },
+]
+numpy = "^1.26.3"
+uform = "^1.0.3"
+coremltools = "^7.1"
+click = "^8.1.7"
+
+[[tool.poetry.source]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

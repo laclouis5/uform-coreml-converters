@@ -38,11 +38,3 @@ def get_fp16_model(model_name: str, token: str | None = None) -> VLM_FP16:
     model.text_encoder.load_state_dict(state["text_encoder"])
 
     return model
-
-
-def main():
-    get_fp16_model("uform-vl-multilingual-v2")
-
-
-if __name__ == "__main__":
-    main()

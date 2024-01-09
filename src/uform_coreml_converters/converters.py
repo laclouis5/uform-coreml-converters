@@ -5,6 +5,7 @@ import coremltools.optimize.coreml as cto
 import torch
 import uform
 
+from .model_ane import get_ane_model
 from .model_fp16 import get_fp16_model
 
 
@@ -34,10 +35,43 @@ class CML_ImageEncoder(torch.nn.Module):
         return features, embeddings
 
 
-def convert_model(model_name: str, out_dir: Path, compression: str | None = None):
-    model = get_fp16_model(f"unum-cloud/{model_name}").eval()
-    image_encoder = CML_ImageEncoder(model.image_encoder).eval()
-    text_encoder = CML_TextEncoder(model.text_encoder).eval()
+class CML_TextEncoder_ANE(torch.nn.Module):
+    def __init__(self, model: uform.TextEncoder):
+        super().__init__()
+        self.model = model.eval()
+
+    def forward(
+        self, input_ids: torch.Tensor, attention_mask: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        features = self.model.forward_features(input_ids, attention_mask)
+        embeddings = self.model.forward_embedding(features, attention_mask)
+
+        return features.squeeze(2).transpose(1, 2), embeddings.squeeze(-1).squeeze(-1)
+
+
+class CML_ImageEncoder_ANE(torch.nn.Module):
+    def __init__(self, model: uform.VisualEncoder):
+        super().__init__()
+        self.model = model.eval()
+
+    def forward(self, image: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        features = self.model.forward_features(image)
+        embeddings = self.model.forward_embedding(features)
+
+        return features.squeeze(2).transpose(1, 2), embeddings.squeeze(-1).squeeze(-1)
+
+
+def convert_model(
+    model_name: str, out_dir: Path, ane: bool = False, compression: str | None = None
+):
+    if ane:
+        model = get_ane_model(f"unum-cloud/{model_name}").eval()
+        image_encoder = CML_ImageEncoder_ANE(model.image_encoder).eval()
+        text_encoder = CML_TextEncoder_ANE(model.text_encoder).eval()
+    else:
+        model = get_fp16_model(f"unum-cloud/{model_name}").eval()
+        image_encoder = CML_ImageEncoder(model.image_encoder).eval()
+        text_encoder = CML_TextEncoder(model.text_encoder).eval()
 
     max_length = model.text_encoder.max_position_embeddings
     c, img_size = 3, model.image_encoder.image_size

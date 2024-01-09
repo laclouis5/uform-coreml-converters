@@ -10,7 +10,7 @@ from ..converters import convert_model
 @click.option(
     "--out",
     type=click.Path(file_okay=False, writable=True),
-    default=".",
+    default="build/",
     help="Output directory where to store the converted models.",
 )
 @click.option(

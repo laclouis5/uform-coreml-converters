@@ -14,8 +14,8 @@ class TextEncoder_FP16(models.TextEncoder):
     def get_attention_mask(
         self, attn_mask: torch.Tensor, dtype: torch.dtype
     ) -> torch.Tensor:
-        attn_mask = attn_mask.to(dtype)
-        attn_mask = (1.0 - attn_mask) * torch.finfo(torch.float16).min
+        attn_mask = 1.0 - attn_mask.to(dtype)
+        attn_mask = attn_mask.masked_fill(attn_mask == 1.0, torch.finfo(dtype).min)
         return attn_mask.unsqueeze(1).expand(-1, attn_mask.shape[1], -1).unsqueeze(1)
 
 

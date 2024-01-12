@@ -28,10 +28,11 @@ Convert the UForm text and image encoders to CoreML using 8-bits palettization:
 convert --name uform-vl-multilingual-v2 --compression palettization
 ```
 
+To evaluate the original and converted models, first `cd` into the `coco-sm` directory.
+
 Evaluate the original PyTorch UForm model on the COCO-SM dataset (adapt the val2014 path):
 
 ```shell
-cd coco-sm
 python eval.py --model_name 'uform' --image_dir_path 'val2014' --meta_files_paths 'meta/google.json' --batch_size 16 --report_name 'uform'
 ```
 
@@ -40,7 +41,6 @@ You can optionally specify the option `--device 'cuda'` (or `--device 'mps'` on 
 To evaluate the exported CoreML UForm models:
 
 ```shell
-cd coco-sm
 python eval.py --model_name 'uform_coreml' --image_dir_path 'val2014' --meta_files_paths 'meta/google.json' --batch_size 16 --report_name 'uform_coreml'
 ```
 

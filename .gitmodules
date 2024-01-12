@@ -3,4 +3,4 @@
 	url = https://github.com/huggingface/exporters.git
 [submodule "coco-sm"]
 	path = coco-sm
-	url = https://github.com/unum-cloud/coco-sm.git
+	url = https://github.com/laclouis5/coco-sm.git

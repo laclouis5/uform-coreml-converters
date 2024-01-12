@@ -314,17 +314,6 @@ class TextEncoderBlock_ANE(models.TextEncoderBlock):
         setattr(self, "mlp", MLP_ANE(self.dim))
 
 
-class TextEncoder_FP16(models.TextEncoder):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def get_attention_mask(
-        self, attn_mask: torch.Tensor, dtype: torch.dtype
-    ) -> torch.Tensor:
-        attn_mask = (1.0 - attn_mask) * torch.finfo(torch.float16).min
-        return attn_mask.unsqueeze(1).unsqueeze(1)
-
-
 class TextEncoder_ANE(models.TextEncoder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -375,7 +364,8 @@ class TextEncoder_ANE(models.TextEncoder):
     def get_attention_mask(
         self, attn_mask: torch.Tensor, dtype: torch.dtype
     ) -> torch.Tensor:
-        attn_mask = (1.0 - attn_mask) * torch.finfo(torch.half).min
+        attn_mask = 1.0 - attn_mask.to(dtype)
+        attn_mask = attn_mask.masked_fill(attn_mask == 1.0, torch.finfo(dtype).min)
         return attn_mask.unsqueeze(-1).unsqueeze(-1)
 
     def pool_features(self, x: torch.Tensor, attn_mask: torch.Tensor) -> torch.Tensor:
